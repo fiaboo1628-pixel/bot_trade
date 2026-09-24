@@ -44,6 +44,8 @@ LABELS: dict[str, tuple[str, str]] = {
     "r_atr": ("Độ rộng stoploss (× ATR)", "1R = stoploss ban đầu = hệ số này × ATR của nến tín hiệu."),
     "trail_start_r": ("Kích hoạt trailing tại (R)", "Lãi chạm mức này (tính theo R) thì bật trailing."),
     "trail_dist_r": ("Khoảng trailing (R)", "Trailing bám đỉnh/đáy, cách một khoảng bằng ngần này R."),
+    "trail_on": ("Bật trailing", "Tắt để chỉ còn SL ban đầu (và TP nếu có)."),
+    "tp_r": ("Chốt lời cố định (R)", "Chốt lời khi lãi đạt ngần này R; 0 = tắt."),
     "risk_pct": ("Rủi ro mỗi lệnh (% vốn)", "Số % vốn mất nếu lệnh dính stoploss ban đầu."),
     "max_lev": ("Đòn bẩy tối đa", "Giới hạn đòn bẩy khi tính khối lượng theo rủi ro."),
 }
