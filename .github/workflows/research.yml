@@ -11,6 +11,9 @@ on:
       buy:
         description: 'Tham số buy JSON, ví dụ {"htf_trend": true}'
         default: "{}"
+      sell:
+        description: 'Tham số sell JSON, ví dụ {"r_atr": 2.0}'
+        default: "{}"
   push:
     branches: ["claude/**", "research/**"]
     paths: ["research/**", "user_data/strategies/**", "run_futures.py", ".github/workflows/research.yml"]
@@ -22,6 +25,7 @@ jobs:
     env:
       PAIRS: ${{ inputs.pairs || 'BTC ETH SOL BNB XRP DOGE ADA LINK AVAX LTC' }}
       BUY: ${{ inputs.buy || '{}' }}
+      SELL: ${{ inputs.sell || '{}' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -36,7 +40,7 @@ jobs:
           END=$(date -u -d "$(date -u +%Y-%m-01) -1 month" +%Y-%m)
           python research/binance_vision.py --pairs $PAIRS --start 2020-10 --end $END --out data/binance
       - name: Backtest từng coin và danh mục
-        run: python research/multi_coin.py --pairs $PAIRS --datadir data/binance --timerange 20210101- --buy "$BUY"
+        run: python research/multi_coin.py --pairs $PAIRS --datadir data/binance --timerange 20210101- --buy "$BUY" --sell "$SELL"
       - uses: actions/upload-artifact@v4
         with:
           name: research-result
