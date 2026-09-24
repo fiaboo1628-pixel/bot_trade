@@ -17,8 +17,8 @@ Mọi cổng chỉ mở trên `127.0.0.1` của máy. Xem từ điện thoại k
 
 ## 2. Lấy code
 ```bash
-git clone https://github.com/fiaboo1628-pixel/sat-hach-trainer.git
-cd sat-hach-trainer/trading/donchian_btc/deploy
+git clone https://github.com/fiaboo1628-pixel/donchian-bot.git
+cd donchian-bot/deploy
 ```
 
 ## 3. Chuẩn bị (một lần)
@@ -89,7 +89,7 @@ Tài khoản miễn phí có khoảng 60 giờ/tháng với máy 2 nhân.
    *Region* → **Southeast Asia**. Cùng trang đó, *Default idle timeout* có thể tăng lên 240 phút.
 2. Mở repo trên GitHub → nút **Code** → tab **Codespaces** → **Create codespace on main**.
    **Không cần gõ lệnh**: codespace tự cài Docker, tạo mật khẩu và bật bot dry-run (2–3 phút).
-3. Mở file **`trading/donchian_btc/deploy/BOT_LOGIN.md`** (tự mở sẵn; nếu thấy "đang cài" thì đợi rồi mở lại
+3. Mở file **`deploy/BOT_LOGIN.md`** (tự mở sẵn; nếu thấy "đang cài" thì đợi rồi mở lại
    từ cây thư mục bên trái). File ghi: kết nối Binance OK hay bị chặn, và 2 mật khẩu đăng nhập.
 4. Tab **Ports**: dòng **8080** (FreqUI) hoặc **8090** (Chỉnh tham số) → bấm biểu tượng quả địa cầu.
    Link chỉ tài khoản GitHub của bạn mở được (để Private, đừng đổi sang Public).

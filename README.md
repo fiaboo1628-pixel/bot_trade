@@ -1,5 +1,9 @@
 # DonchianRevert — BTC M15 mean reversion (Binance USDT-M Futures)
 
+## Chạy bot
+- **Máy nhà / VPS (Docker)** hoặc **GitHub Codespaces** (không cần gõ lệnh): xem [`deploy/README.md`](deploy/README.md).
+- Chế độ: dry-run (mặc định) → Binance Demo → tiền thật, chỉ khác bộ API key (`setup --api`).
+
 ## Chiến lược (`user_data/strategies/DonchianRevert.py`)
 | Vai trò | Chỉ báo | Điều kiện |
 |---|---|---|
