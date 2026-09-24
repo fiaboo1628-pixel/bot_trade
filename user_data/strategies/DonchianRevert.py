@@ -59,6 +59,9 @@ class DonchianRevert(IStrategy):
     trail_dist_r = DecimalParameter(0.1, 2.0, default=0.5, decimals=1, space="sell", optimize=False)
     risk_pct = DecimalParameter(0.1, 3.0, default=1.0, decimals=2, space="sell", optimize=False)
     max_lev = IntParameter(1, 10, default=5, space="sell", optimize=False)
+    # Bật khi chạy nhiều coin cùng lúc: luôn dùng max_lev để ký quỹ mỗi lệnh nhỏ (rủi ro/lệnh không đổi,
+    # vì khối lượng vẫn tính theo 1R). Tắt = đòn bẩy tối thiểu cần thiết (mặc định, 1 coin).
+    fixed_lev = BooleanParameter(default=False, space="sell", optimize=False)
 
     def populate_indicators(self, df: DataFrame, metadata: dict) -> DataFrame:
         hh = df["high"].rolling(self.dc_period.value).max()
@@ -98,6 +101,8 @@ class DonchianRevert(IStrategy):
 
     def leverage(self, pair, current_time, current_rate, proposed_leverage, max_leverage,
                  entry_tag, side, **kwargs) -> float:
+        if self.fixed_lev.value:
+            return float(min(self.max_lev.value, max_leverage))
         r_pct = self._signal_atr(pair, current_time) * self.r_atr.value / current_rate
         need = self.risk_pct.value / 100 / r_pct
         return float(min(max(need, 1.0), self.max_lev.value, max_leverage))
