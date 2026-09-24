@@ -12,11 +12,18 @@
 | Lọc bán tháo/mua đuổi | Volume / TB 96 nến | < 1.0 |
 | Rủi ro | ATR(14) | ATR ≥ 0.4% giá; 1R = 3×ATR |
 
-Thoát: SL −1R → khi lãi +2R bật trailing cách đỉnh/đáy 0.5R. Khối lượng: rủi ro 1% vốn/lệnh (tối đa x5).
+Thoát: SL −1R → khi lãi +2R bật trailing cách đỉnh/đáy 1R. Khối lượng: rủi ro 1% vốn/lệnh (tối đa x5).
+Tuỳ chọn: `tp_r` chốt lời cố định theo R, `trail_on` bật/tắt trailing.
 
 ## Kết quả backtest (01/2021 → 09/2026, phí 0.035%/chiều, funding 0.01%/8h)
-Tổng **+35.2%**, ~**5.4%/năm**, max drawdown **18.3%**, profit factor **1.11**, 451 lệnh, thắng 38%.
-Theo năm: 2021 +7.6% · 2022 +9.0% · 2023 +16.7% · 2024 −6.2% · 2025 +1.0% · 2026 +7.1%.
+Chạy với `--timeframe-detail 1m` (thoát lệnh tính trên từng nến 1m bên trong nến 15m — chỉ dùng nến 15m
+thì trailing sát bị thổi phồng hoặc đánh giá thấp):
+Tổng **+84.9%**, ~**11.3%/năm**, max drawdown **15.1%**, profit factor **1.24**, 426 lệnh, thắng 39%, 6/6 năm có lãi.
+Lãi theo năm (USDT, vốn 1000): 2021 +208 · 2022 +112 · 2023 +192 · 2024 +146 · 2025 +88 · 2026 +103.
+Dữ liệu Binance Futures thật (data.binance.vision, trailing 0.5R cũ): +53%, DD 12.9%, PF 1.22.
+
+So sánh cách thoát (cùng dữ liệu, 1m detail): trailing 0.5R +56% · trailing 1R **+85%, DD 15%** ·
+TP cố định 1:4 không trailing +55%, DD 22%, 2 năm lỗ · 1:5 +121% nhưng thắng 22%, chỉ 42% số tháng có lãi.
 (Mua & giữ BTC cùng kỳ: +197%.)
 
 ## Quá trình rút ra

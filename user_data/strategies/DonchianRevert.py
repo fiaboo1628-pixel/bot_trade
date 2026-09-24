@@ -8,10 +8,11 @@ Tín hiệu (xét khi nến 15m đóng cửa):
   - và ADX(14) > 30, Volume < trung bình 24h (96 nến), ATR(14) >= 0.4% giá
 Quản lý lệnh:
   - 1R = 3 x ATR(14) của nến tín hiệu. SL ban đầu = -1R.
-  - Khi lãi chạm +2R: trailing, cách đỉnh (đáy với Short) 0.5R.
+  - Khi lãi chạm +2R: trailing, cách đỉnh (đáy với Short) 1R.
   - Khối lượng: rủi ro 1% vốn mỗi lệnh (đòn bẩy tự tính, tối đa x5).
-Backtest (01/2021 → 09/2026, dữ liệu Bitstamp BTC/USD 1m, phí 0.035%/chiều, funding 0.01%/8h):
-  +35.2% tổng, ~5.4%/năm, max drawdown 18.3%, profit factor 1.11, 5/6 năm có lãi.
+  - Tuỳ chọn: tp_r > 0 chốt lời cố định ở tp_r × R; trail_on = False tắt trailing.
+Backtest (01/2021 → 09/2026, Bitstamp BTC/USD, --timeframe-detail 1m, phí 0.035%/chiều, funding 0.01%/8h):
+  +84.9% tổng, ~11.3%/năm, max drawdown 15.1%, profit factor 1.24, 6/6 năm có lãi.
 
 Mọi ngưỡng ở trên là tham số: giá trị mặc định nằm trong code, và có thể ghi đè bằng file
 DonchianRevert.json đặt cạnh file này (trang "Chỉnh tham số" trong thư mục tuner/ ghi file đó).
@@ -42,6 +43,7 @@ class DonchianRevert(IStrategy):
     minimal_roi = {"0": 100}          # không chốt lời cố định
     stoploss = -0.30                  # lưới an toàn; SL thật nằm trong custom_stoploss
     use_custom_stoploss = True
+    use_custom_roi = True             # chốt lời cố định theo R (tp_r); tắt khi tp_r = 0
     use_exit_signal = False
 
     # --- Vào lệnh (space "buy")
@@ -56,7 +58,9 @@ class DonchianRevert(IStrategy):
     # --- Thoát lệnh và rủi ro (space "sell")
     r_atr = DecimalParameter(1.0, 6.0, default=3.0, decimals=1, space="sell", optimize=False)
     trail_start_r = DecimalParameter(0.5, 5.0, default=2.0, decimals=1, space="sell", optimize=False)
-    trail_dist_r = DecimalParameter(0.1, 2.0, default=0.5, decimals=1, space="sell", optimize=False)
+    trail_dist_r = DecimalParameter(0.1, 2.0, default=1.0, decimals=1, space="sell", optimize=False)
+    trail_on = BooleanParameter(default=True, space="sell", optimize=False)
+    tp_r = DecimalParameter(0.0, 10.0, default=0.0, decimals=1, space="sell", optimize=False)
     risk_pct = DecimalParameter(0.1, 3.0, default=1.0, decimals=2, space="sell", optimize=False)
     max_lev = IntParameter(1, 10, default=5, space="sell", optimize=False)
     # Bật khi chạy nhiều coin cùng lúc: luôn dùng max_lev để ký quỹ mỗi lệnh nhỏ (rủi ro/lệnh không đổi,
@@ -117,6 +121,8 @@ class DonchianRevert(IStrategy):
                         current_profit: float, after_fill: bool, **kwargs):
         r = self._risk(pair, trade)
         start, dist = self.trail_start_r.value, self.trail_dist_r.value
+        if not self.trail_on.value:
+            start = float("inf")                       # chỉ còn SL ban đầu -1R
         if not trade.is_short:
             stop = trade.open_rate - r
             peak = max(trade.max_rate or trade.open_rate, current_rate)
@@ -129,3 +135,10 @@ class DonchianRevert(IStrategy):
                 stop = min(stop, trough + dist * r)
         return stoploss_from_absolute(stop, current_rate, is_short=trade.is_short,
                                       leverage=trade.leverage)
+
+    def custom_roi(self, pair: str, trade: Trade, current_time: datetime, trade_duration: int,
+                   entry_tag, side: str, **kwargs):
+        """Chốt lời khi giá đi được tp_r × R (ROI của freqtrade tính trên ký quỹ nên nhân đòn bẩy)."""
+        if self.tp_r.value <= 0:
+            return None
+        return self.tp_r.value * self._risk(pair, trade) / trade.open_rate * trade.leverage
