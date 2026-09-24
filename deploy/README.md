@@ -17,8 +17,8 @@ Mọi cổng chỉ mở trên `127.0.0.1` của máy. Xem từ điện thoại k
 
 ## 2. Lấy code
 ```bash
-git clone https://github.com/fiaboo1628-pixel/donchian-bot.git
-cd donchian-bot/deploy
+git clone https://github.com/fiaboo1628-pixel/bot_trade.git
+cd bot_trade/deploy
 ```
 
 ## 3. Chuẩn bị (một lần)
