@@ -78,12 +78,13 @@ def main() -> None:
     ap.add_argument("--max-open", type=int, nargs="+", default=[3, 5])
     ap.add_argument("--risk", type=float, default=1.0)
     ap.add_argument("--buy", default="{}", help='tham số buy dạng JSON, ví dụ \'{"htf_trend": true}\'')
+    ap.add_argument("--sell", default="{}", help='tham số sell dạng JSON, ví dụ \'{"r_atr": 2.0}\'')
     a = ap.parse_args()
-    buy = json.loads(a.buy)
-    single = {"buy": buy, "sell": {"risk_pct": a.risk}}
+    buy, sell = json.loads(a.buy), {"risk_pct": a.risk, **json.loads(a.sell)}
+    single = {"buy": buy, "sell": sell}
     rows = [backtest([p], 1, single, a, p) for p in a.pairs]
     print(table(rows), flush=True)
-    port = {"buy": buy, "sell": {"risk_pct": a.risk, "fixed_lev": True}}
+    port = {"buy": buy, "sell": {**sell, "fixed_lev": True}}
     prow = [backtest(a.pairs, n, port, a, f"Danh mục {len(a.pairs)} coin, tối đa {n} lệnh") for n in a.max_open]
     md = (f"## Từng coin (1 lệnh/lúc, rủi ro {a.risk}%/lệnh, {a.timerange})\n\n{table(rows)}\n"
           f"## Danh mục\n\n{table(prow)}")
